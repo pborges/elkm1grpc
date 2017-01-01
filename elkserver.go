@@ -64,7 +64,7 @@ func (s *Server) write() {
 				log.Panic("writeChan:", err)
 			}
 		case msg := <-s.readChan:
-			log.Println(msg)
+			log.Println("READ:", msg)
 			s.interestLock.Lock()
 			if chn, ok := s.interestChannels[msg[2:4]]; ok {
 				for c := range chn {
