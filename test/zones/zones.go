@@ -18,20 +18,16 @@ func main() {
 	defer conn.Close()
 	elk := elkm1grpc.NewElkGRPCClient(conn)
 
-	asClient, err := elk.ZoneChange(context.Background(), &elkm1grpc.ZoneChangeArgs{})
+	z, err := elk.ZoneStatus(context.Background(), &elkm1grpc.ZoneStatusArgs{})
 	if err != nil {
-		log.Fatalln(err)
+		log.Println(err)
+		return
 	}
-
-	for {
-		z, err := asClient.Recv()
-		if err != nil {
-			log.Fatalln(err)
-		}
-		log.Println("ZoneChangeReport -----------------------------------------")
-		log.Println("Zone:", z.Zone)
+	log.Println("Zone Status\n-----------------------------------------")
+	for _, z := range z.Zones {
+		log.Println("Zone       :", z.Zone)
 		log.Println("Description:", z.Description)
-		log.Println("Status:", z.Status.String())
-		log.Println("SubStatus:", z.SubStatus.String())
+		log.Println("Status     :", z.Status.String())
+		log.Println("SubStatus  :", z.SubStatus.String(), "\n")
 	}
 }

@@ -10,6 +10,7 @@ import (
 )
 
 func main() {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	log.SetOutput(os.Stdout)
 
 	lis, err := net.Listen("tcp", "localhost:5000")

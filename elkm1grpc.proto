@@ -9,8 +9,16 @@ service ElkGRPC {
     }
     rpc Disarm (ArmArgs) returns (ArmingStatusArea) {
     }
+    rpc ZoneStatus (ZoneStatusArgs) returns (ZoneStatusReport) {
+    }
     rpc ArmingStatusChange (ArmingChangeArgs) returns (stream ArmingStatusReport);
-    rpc ZoneChange (ZoneChangeArgs) returns (stream ZoneChangeUpdate);
+    rpc ZoneChange (ZoneChangeArgs) returns (stream Zone);
+}
+message ZoneStatusArgs {
+
+}
+message ZoneStatusReport {
+    repeated Zone zones = 1;
 }
 message ZoneChangeArgs {
 }
@@ -76,7 +84,7 @@ message ArmArgs {
     int32 pin = 2;
 }
 
-message ZoneChangeUpdate {
+message Zone {
     int32 zone = 1;
     string description = 2;
     ZoneStatus status = 3;
