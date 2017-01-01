@@ -1,0 +1,97 @@
+syntax = "proto3";
+
+package elkm1grpc;
+
+service ElkGRPC {
+    rpc ArmStay (ArmArgs) returns (ArmingStatusArea) {
+    }
+    rpc ArmAway (ArmArgs) returns (ArmingStatusArea) {
+    }
+    rpc Disarm (ArmArgs) returns (ArmingStatusArea) {
+    }
+    rpc ArmingStatusChange (ArmingChangeArgs) returns (stream ArmingStatusReport);
+    rpc ZoneChange (ZoneChangeArgs) returns (stream ZoneChangeUpdate);
+}
+message ZoneChangeArgs {
+}
+message ArmingChangeArgs {
+}
+
+message ArmingStatusReport {
+    repeated ArmingStatusArea areas = 1;
+}
+
+message ArmingStatusArea {
+    int32 area = 1;
+    ArmingStatus arming_status = 2;
+    ArmUpState arm_up_state = 3;
+    AlarmState alarm_state = 4;
+
+    enum ArmingStatus {
+        DISARMED = 0;
+        ARMED_AWAY = 1;
+        ARMED_STAY = 2;
+        ARMED_STAY_INSTANT = 3;
+        ARMED_TO_NIGHT = 4;
+        ARMED_TO_NIGHT_INSTANT = 5;
+        ARMED_TO_VACATION = 6;
+        ARM_STEP_TO_NEXT_AWAY_MODE = 7;
+        ARM_STEP_TO_NEXT_STAY_MODE = 8;
+        FORCE_AWAY = 9;
+        FORCE_STAY = 10;
+    }
+    enum ArmUpState {
+        NOT_READY = 0;
+        READY = 1;
+        READY_FORCE = 2;
+        ARMED_EXIT_TIMER = 3;
+        ARMED = 4;
+        FORCE_ARMED = 5;
+        ARMED_BYPASS = 6;
+    }
+    enum AlarmState {
+        NO_ALARM = 0;
+        ENTRANCE_DELAY = 1;
+        ABORT_DELAY = 2;
+        ALARM_FIRE = 3;
+        ALARM_MEDICAL = 4;
+        ALARM_POLICE = 5;
+        ALARM_BURGLAR = 6;
+        ALARM_AUX1 = 7;
+        ALARM_AUX2 = 8;
+        ALARM_AUX3 = 9;
+        ALARM_AUX4 = 10;
+        ALARM_CARBON_MONOXIDE = 11;
+        ALARM_EMERGENCY = 12;
+        ALARM_FREEZE = 13;
+        ALARM_GAS = 14;
+        ALARM_HEAT = 15;
+        ALARM_WATER = 16;
+        ALARM_FIRE_SUPERVISORY = 17;
+        ALARM_FIRE_VERIFY = 18;
+    }
+}
+message ArmArgs {
+    int32 area = 1;
+    int32 pin = 2;
+}
+
+message ZoneChangeUpdate {
+    int32 zone = 1;
+    string description = 2;
+    ZoneStatus status = 3;
+    ZoneSubStatus sub_status = 4;
+
+    enum ZoneStatus {
+        NORMAL = 0;
+        TROUBLE = 1;
+        VIOLATED = 2;
+        BYPASSED = 3;
+    }
+    enum ZoneSubStatus {
+        UNCONFIGURED = 0;
+        OPEN = 1;
+        EOL = 2;
+        SHORT = 3;
+    }
+}
