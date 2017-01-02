@@ -12,6 +12,8 @@ import (
 	"strings"
 )
 
+const WaitDuration = 5 * time.Second
+
 func NewServer(stream io.ReadWriter) (s *Server) {
 	s = &Server{
 		stream:     stream,
@@ -131,7 +133,7 @@ func (s *Server) ArmStay(context context.Context, args *ArmArgs) (*ArmingStatusA
 	c := s.registerInterest("AS")
 	defer s.unregisterInterest("AS", c)
 
-	t := time.After(2 * time.Second)
+	t := time.After(WaitDuration)
 	select {
 	case as := <-c:
 		return decodeArmingStatusReport(as).Areas[args.Area], nil
@@ -151,7 +153,7 @@ func (s *Server) ArmAway(context context.Context, args *ArmArgs) (*ArmingStatusA
 	c := s.registerInterest("AS")
 	defer s.unregisterInterest("AS", c)
 
-	t := time.After(2 * time.Second)
+	t := time.After(WaitDuration)
 	select {
 	case as := <-c:
 		return decodeArmingStatusReport(as).Areas[args.Area], nil
@@ -171,7 +173,7 @@ func (s *Server) Disarm(context context.Context, args *ArmArgs) (as *ArmingStatu
 	c := s.registerInterest("AS")
 	defer s.unregisterInterest("AS", c)
 
-	t := time.After(2 * time.Second)
+	t := time.After(WaitDuration)
 	select {
 	case as := <-c:
 		return decodeArmingStatusReport(as).Areas[args.Area], nil
@@ -187,7 +189,7 @@ func (s *Server) ZoneStatus(context context.Context, args *ZoneStatusArgs) (zsr 
 	c := s.registerInterest("ZS")
 	defer s.unregisterInterest("ZS", c)
 
-	t := time.After(2 * time.Second)
+	t := time.After(WaitDuration)
 	select {
 	case r := <-c:
 		zsr = new(ZoneStatusReport)
@@ -205,6 +207,24 @@ func (s *Server) ZoneStatus(context context.Context, args *ZoneStatusArgs) (zsr 
 				break
 			}
 		}
+		return
+	case <-t:
+		err = errors.New("timeout")
+	}
+
+	return
+}
+
+func (s *Server) ArmingStatus(context context.Context, args *ArmingStatusArgs) (asr *ArmingStatusReport, err error) {
+	s.writeChan <- "as00"
+
+	c := s.registerInterest("AS")
+	defer s.unregisterInterest("AS", c)
+
+	t := time.After(5 * time.Second)
+	select {
+	case r := <-c:
+		asr = decodeArmingStatusReport(r)
 		return
 	case <-t:
 		err = errors.New("timeout")
