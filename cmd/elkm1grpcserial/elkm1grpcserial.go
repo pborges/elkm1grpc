@@ -43,7 +43,7 @@ func main() {
 	elkm1grpc.RegisterElkGRPCServer(s, elkServer)
 
 	log.Println("listening")
-	lis, err := net.Listen("tcp", "localhost:5000")
+	lis, err := net.Listen("tcp", ":5000")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}

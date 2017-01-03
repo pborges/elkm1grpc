@@ -13,7 +13,7 @@ func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	log.SetOutput(os.Stdout)
 
-	lis, err := net.Listen("tcp", "localhost:5000")
+	lis, err := net.Listen("tcp", ":5000")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
