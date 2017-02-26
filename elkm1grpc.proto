@@ -40,47 +40,50 @@ message ArmingStatusArea {
     AlarmState alarm_state = 4;
 
     enum ArmingStatus {
-        DISARMED = 0;
-        ARMED_AWAY = 1;
-        ARMED_STAY = 2;
-        ARMED_STAY_INSTANT = 3;
-        ARMED_TO_NIGHT = 4;
-        ARMED_TO_NIGHT_INSTANT = 5;
-        ARMED_TO_VACATION = 6;
-        ARM_STEP_TO_NEXT_AWAY_MODE = 7;
-        ARM_STEP_TO_NEXT_STAY_MODE = 8;
-        FORCE_AWAY = 9;
-        FORCE_STAY = 10;
+        UNKNOWN_ARMING_STATUS = 0;
+        DISARMED = 1;
+        ARMED_AWAY = 2;
+        ARMED_STAY = 3;
+        ARMED_STAY_INSTANT = 4;
+        ARMED_TO_NIGHT = 5;
+        ARMED_TO_NIGHT_INSTANT = 6;
+        ARMED_TO_VACATION = 7;
+        ARM_STEP_TO_NEXT_AWAY_MODE = 8;
+        ARM_STEP_TO_NEXT_STAY_MODE = 9;
+        FORCE_AWAY = 10;
+        FORCE_STAY = 11;
     }
     enum ArmUpState {
-        NOT_READY = 0;
-        READY = 1;
-        READY_FORCE = 2;
-        ARMED_EXIT_TIMER = 3;
-        ARMED = 4;
-        FORCE_ARMED = 5;
-        ARMED_BYPASS = 6;
+        UNKNOWN_ARM_UP_STATE = 0;
+        NOT_READY = 1;
+        READY = 2;
+        READY_FORCE = 3;
+        ARMED_EXIT_TIMER = 4;
+        ARMED = 5;
+        FORCE_ARMED = 6;
+        ARMED_BYPASS = 7;
     }
     enum AlarmState {
-        NO_ALARM = 0;
-        ENTRANCE_DELAY = 1;
-        ABORT_DELAY = 2;
-        ALARM_FIRE = 3;
-        ALARM_MEDICAL = 4;
-        ALARM_POLICE = 5;
-        ALARM_BURGLAR = 6;
-        ALARM_AUX1 = 7;
-        ALARM_AUX2 = 8;
-        ALARM_AUX3 = 9;
-        ALARM_AUX4 = 10;
-        ALARM_CARBON_MONOXIDE = 11;
-        ALARM_EMERGENCY = 12;
-        ALARM_FREEZE = 13;
-        ALARM_GAS = 14;
-        ALARM_HEAT = 15;
-        ALARM_WATER = 16;
-        ALARM_FIRE_SUPERVISORY = 17;
-        ALARM_FIRE_VERIFY = 18;
+        UNKNOWN = 0;
+        NO_ALARM = 1;
+        ENTRANCE_DELAY = 2;
+        ABORT_DELAY = 3;
+        ALARM_FIRE = 4;
+        ALARM_MEDICAL = 5;
+        ALARM_POLICE = 6;
+        ALARM_BURGLAR = 7;
+        ALARM_AUX1 = 8;
+        ALARM_AUX2 = 9;
+        ALARM_AUX3 = 10;
+        ALARM_AUX4 = 11;
+        ALARM_CARBON_MONOXIDE = 12;
+        ALARM_EMERGENCY = 13;
+        ALARM_FREEZE = 14;
+        ALARM_GAS = 15;
+        ALARM_HEAT = 16;
+        ALARM_WATER = 17;
+        ALARM_FIRE_SUPERVISORY = 18;
+        ALARM_FIRE_VERIFY = 19;
     }
 }
 message ArmArgs {

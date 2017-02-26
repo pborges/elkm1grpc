@@ -11,7 +11,7 @@ import (
 func main() {
 	log.SetOutput(os.Stdout)
 
-	conn, err := grpc.Dial("stratus:5000", grpc.WithInsecure())
+	conn, err := grpc.Dial("localhost:5000", grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}

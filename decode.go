@@ -5,7 +5,7 @@ import (
 )
 
 const elkZoneCount = 8
-const elkEnumConst = 48
+const elkEnumConst = 48 - 1 // because the real enums start at 1
 
 func decodeArmingStatusReport(text string) (a *ArmingStatusReport) {
 	a = new(ArmingStatusReport)
