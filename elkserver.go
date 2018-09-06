@@ -3,7 +3,7 @@ package elkm1grpc
 import (
 	"io"
 	"log"
-	"golang.org/x/net/context"
+	"context"
 	"fmt"
 	"time"
 	"errors"
@@ -12,13 +12,15 @@ import (
 	"strings"
 )
 
+//go:generate protoc --go_out=plugins=grpc:. elkm1grpc.proto
+
 const WaitDuration = 5 * time.Second
 
 func NewServer(stream io.ReadWriter) (s *Server) {
 	s = &Server{
-		stream:     stream,
-		readChan:   make(chan string),
-		writeChan:  make(chan string),
+		stream:    stream,
+		readChan:  make(chan string),
+		writeChan: make(chan string),
 	}
 	s.interestChannels = make(map[string]map[chan string]bool)
 	s.interestLock = new(sync.Mutex)
@@ -105,6 +107,9 @@ func (s *Server) unregisterInterest(msg string, c chan string) {
 }
 
 func (s *Server) asciiLookup(Type, Address int) string {
+	s.asciiTableLock.Lock()
+	defer s.asciiTableLock.Unlock()
+
 	if _, ok := s.asciiTable[Type]; !ok {
 		s.asciiTable[Type] = make(map[int]string)
 	}
@@ -125,7 +130,7 @@ func (s *Server) asciiLookup(Type, Address int) string {
 
 func (s *Server) ArmStay(context context.Context, args *ArmArgs) (*ArmingStatusArea, error) {
 	s.writeChan <- fmt.Sprintf("a%s%d%06d00",
-		string(ArmingStatusArea_ARM_STEP_TO_NEXT_STAY_MODE + elkEnumConst),
+		string(ArmingStatusArea_ARM_STEP_TO_NEXT_STAY_MODE+elkEnumConst),
 		args.Area,
 		args.Pin,
 	)
@@ -145,7 +150,7 @@ func (s *Server) ArmStay(context context.Context, args *ArmArgs) (*ArmingStatusA
 
 func (s *Server) ArmAway(context context.Context, args *ArmArgs) (*ArmingStatusArea, error) {
 	s.writeChan <- fmt.Sprintf("a%s%d%06d00",
-		string(ArmingStatusArea_ARM_STEP_TO_NEXT_AWAY_MODE + elkEnumConst),
+		string(ArmingStatusArea_ARM_STEP_TO_NEXT_AWAY_MODE+elkEnumConst),
 		args.Area,
 		args.Pin,
 	)
@@ -165,7 +170,7 @@ func (s *Server) ArmAway(context context.Context, args *ArmArgs) (*ArmingStatusA
 
 func (s *Server) Disarm(context context.Context, args *ArmArgs) (as *ArmingStatusArea, err error) {
 	s.writeChan <- fmt.Sprintf("a%s%d%06d00",
-		string(ArmingStatusArea_DISARMED + elkEnumConst),
+		string(ArmingStatusArea_DISARMED+elkEnumConst),
 		args.Area,
 		args.Pin,
 	)
@@ -197,7 +202,7 @@ func (s *Server) ZoneStatus(context context.Context, args *ZoneStatusArgs) (zsr 
 		for i := 0; i < 208; i++ {
 			z := new(Zone)
 			z.Zone = int32(i)
-			status, sub := decodeZoneStatus(int(r[4 + i]))
+			status, sub := decodeZoneStatus(int(r[4+i]))
 			z.Status = Zone_ZoneStatus(status)
 			z.SubStatus = Zone_ZoneSubStatus(sub)
 			if z.SubStatus != Zone_UNCONFIGURED {
@@ -240,6 +245,7 @@ func (s *Server) ArmingStatusChange(args *ArmingChangeArgs, stream ElkGRPC_Armin
 		err := stream.Send(decodeArmingStatusReport(<-c))
 		if err != nil {
 			log.Println("unable to send arming status change", err)
+			return err
 		}
 	}
 	return nil
@@ -254,6 +260,7 @@ func (s *Server) ZoneChange(args *ZoneChangeArgs, stream ElkGRPC_ZoneChangeServe
 		err := stream.Send(z)
 		if err != nil {
 			log.Println("unable to send zone update change", err)
+			return err
 		}
 	}
 	return nil
